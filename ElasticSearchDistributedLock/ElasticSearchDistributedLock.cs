@@ -108,14 +108,14 @@ namespace ElasticSearch
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("ERR:" + ex.ToString());
+                    Trace.TraceError("ERR:" + ex.ToString());
                 }
 
                 retryCount++;
 
                 if (!mAquired && retryCount <= numberOfRetries)
                 {
-                    Console.WriteLine(string.Format("DistributedLock: FAILED TO AQUIRE LOCK. Time in lock: {0} Retry Count: {1}", mStopwatch.Elapsed.ToString(), retryCount));
+                    Trace.TraceWarning(string.Format("DistributedLock: FAILED TO AQUIRE LOCK. Time in lock: {0} Retry Count: {1}", mStopwatch.Elapsed.ToString(), retryCount));
                     Thread.Sleep(retryWaitTimeInMs);
                     retry = true;
                 }
@@ -171,14 +171,14 @@ namespace ElasticSearch
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Error:" + ex.ToString());
+                        Trace.TraceError("Error:" + ex.ToString());
                     }
 
                     retryCount++;
 
                     if (mAquired && retryCount <= numberOfRetries)
                     {
-                        Console.WriteLine(string.Format("DistributedLock: FAILED TO RELEASE LOCK. Time in lock: {0} Retry Count: {1}", mStopwatch.Elapsed.ToString(), retryCount));
+                        Trace.TraceWarning(string.Format("DistributedLock: FAILED TO RELEASE LOCK. Time in lock: {0} Retry Count: {1}", mStopwatch.Elapsed.ToString(), retryCount));
                         Thread.Sleep(retryWaitTimeInMs);
                         retry = true;
                     }
@@ -193,7 +193,7 @@ namespace ElasticSearch
 
             mStopwatch.Stop();
 
-            Console.WriteLine(string.Format("DistributedLock: Time in lock: {0}", mStopwatch.Elapsed.ToString()));
+            Trace.TraceInformation(string.Format("DistributedLock: Time in lock: {0}", mStopwatch.Elapsed.ToString()));
 
             return !mAquired;
         }
