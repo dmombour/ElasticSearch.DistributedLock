@@ -32,6 +32,9 @@ namespace ElasticSearch
         /// <param name="indexName">The name of the elastic search index. Default = distributedlocks</param>
         public ElasticSearchDistributedLock(string namedLock, IElasticClient client = null, string indexName = "distributedlocks")
         {
+            if (string.IsNullOrEmpty(namedLock))
+                throw new ArgumentException("namedLock cannot be null or empty");
+
             mIndex = indexName;
             mNamedLock = namedLock;
             mStopwatch = new Stopwatch();

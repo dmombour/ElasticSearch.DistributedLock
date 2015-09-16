@@ -10,6 +10,24 @@ namespace ElasticSearch.DistributedLock.Tests
     public class ElasticSearchDistributedLockTests
     {
         [TestMethod]
+        public void ThrowArgumentErrorOnEmptyString()
+        {
+            var esClient = Substitute.For<IElasticClient>();
+
+            bool error = false;
+            try
+            {
+                var dLock = new ElasticSearchDistributedLock("", esClient);
+            }
+            catch (Exception)
+            {
+                error = true;
+            }
+
+            Assert.IsTrue(error);
+        }
+
+        [TestMethod]
         public void AquireReturnsTrueWhenResponseIsValid()
         {
             var esClient = Substitute.For<IElasticClient>();
