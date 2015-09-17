@@ -14,7 +14,7 @@ namespace ElasticSearch
     /// </summary>
     public class ElasticSearchDistributedLock : IDisposable
     {
-        private string mNamedLock = "";
+        //private string mNamedLock = "";
         private IElasticClient mClient;
         private bool mAquired;
         private Stopwatch mStopwatch;
@@ -22,7 +22,9 @@ namespace ElasticSearch
         private readonly string mIndex;
         private const string mType = "reference";
 
-        public bool IsDisposed { get; private set; }        
+        public bool IsDisposed { get; private set; }
+
+        public string Name { get; private set; }
 
         /// <summary>
         /// C/tor
@@ -36,7 +38,7 @@ namespace ElasticSearch
                 throw new ArgumentException("namedLock cannot be null or empty");
 
             mIndex = indexName;
-            mNamedLock = namedLock;
+            Name = namedLock;
             mStopwatch = new Stopwatch();
 
             //Only do this once per process.. 
@@ -58,6 +60,21 @@ namespace ElasticSearch
         }
 
         /// <summary>
+        /// Aquires a lock on the named resource and returns true if the lock was obtained.
+        /// </summary>
+        /// <param name="numberOfRetries"></param>
+        /// <param name="retryWaitTimeInMs"></param>
+        /// <param name="Ttlms"></param>
+        /// <returns></returns>
+        public Task<bool> AquireAsync(int numberOfRetries = 0, int retryWaitTimeInMs = 250, int Ttlms = 60000)
+        {
+            return Task.Factory.StartNew<bool>(() => 
+            {
+                return Aquire(numberOfRetries, retryWaitTimeInMs, Ttlms);                
+            });
+        }
+
+        /// <summary>
         /// Aquires a lock on the named resource and returns true if the lock was obtained. False otherwise
         /// </summary>
         /// <param name="numberOfRetries">Number of times to retry getting the lock. Default = 0</param>
@@ -66,7 +83,7 @@ namespace ElasticSearch
         /// <returns></returns>
         public bool Aquire(int numberOfRetries = 0, int retryWaitTimeInMs = 250, int Ttlms = 60000)
         {
-            if (IsDisposed) throw new ObjectDisposedException(mNamedLock);
+            if (IsDisposed) throw new ObjectDisposedException(Name);
 
             mStopwatch.Start();
 
@@ -81,7 +98,7 @@ namespace ElasticSearch
                 var response = mClient.Update<object>(u => u
                 .Index(mIndex)
                 .Type(mType)
-                .Id(mNamedLock)
+                .Id(Name)
                 //This script ensures that the owner is the same.. so that a single process can grab a named lock over again.. with protection for TTL abandoned cases
                 .Script("if (ctx._source.owner != owner && ctx._source.ttl > now ) { assert false } else if (ctx._source.ttl < now) { ctx._source.owner = owner; ctx._source.ttl = ttl; } else { ctx.op = 'noop' }")
                 .Params(p => p
@@ -130,6 +147,20 @@ namespace ElasticSearch
         }
 
         /// <summary>
+        /// Release the lock if aquired
+        /// </summary>
+        /// <param name="numberOfRetries"></param>
+        /// <param name="retryWaitTimeInMs"></param>
+        /// <returns></returns>
+        public Task<bool> ReleaseAsync(int numberOfRetries = 0, int retryWaitTimeInMs = 250)
+        {
+            return Task.Factory.StartNew<bool>(() => 
+                {
+                    return Release(numberOfRetries, retryWaitTimeInMs);
+                });
+        }
+
+        /// <summary>
         /// Releases the lock if aquired
         /// </summary>
         /// <param name="numberOfRetries">Number of times to retry on a failed release</param>
@@ -137,7 +168,7 @@ namespace ElasticSearch
         /// <returns></returns>
         public bool Release(int numberOfRetries = 0, int retryWaitTimeInMs = 250)
         {
-            if (IsDisposed) throw new ObjectDisposedException(mNamedLock);
+            if (IsDisposed) throw new ObjectDisposedException(Name);
 
             if (mAquired)
             {
@@ -145,7 +176,7 @@ namespace ElasticSearch
 
                     var released = false;
 
-                    var response = mClient.Delete(mIndex, mType, mNamedLock);
+                    var response = mClient.Delete(mIndex, mType, Name);
                     if (response.ConnectionStatus.HttpStatusCode == 404)
                     {
                         released = true;

@@ -21,10 +21,25 @@ namespace ElasticSearch.DistributedLock.TestApp
             InitializeComponent();
         }
 
-        private void buttonAquire_Click(object sender, EventArgs e)
+        private async void buttonAquire_Click(object sender, EventArgs e)
         {
+            var time = TimeSpan.FromMinutes(1);
+
+            if (!string.IsNullOrEmpty(textBoxLockTimeout.Text))
+            {
+                TimeSpan.TryParse(textBoxLockTimeout.Text, out time);
+            }
+
+            var retryCount = 0;
+
+            if (!string.IsNullOrEmpty(textBoxLockRetry.Text))
+            {
+                int.TryParse(textBoxLockRetry.Text, out retryCount);
+            }
+
             mLock = new ElasticSearchDistributedLock(textBoxName.Text);
-            var result = mLock.Aquire();
+
+            var result = await mLock.AquireAsync(numberOfRetries: retryCount, Ttlms: (int)time.TotalMilliseconds);
 
             ShowMessage("Aquire: " + result.ToString());
         }
@@ -35,11 +50,11 @@ namespace ElasticSearch.DistributedLock.TestApp
             textBoxLog.AppendText(Environment.NewLine);
         }
 
-        private void buttonRelease_Click(object sender, EventArgs e)
+        private async void buttonRelease_Click(object sender, EventArgs e)
         {
             if (mLock != null)
             {
-                var result = mLock.Release();
+                var result = await mLock.ReleaseAsync();
 
                 ShowMessage("Release: " + result.ToString());
             }
@@ -88,11 +103,13 @@ namespace ElasticSearch.DistributedLock.TestApp
                 var sw = new Stopwatch();
                 sw.Start();
 
+                var client = new Nest.ElasticClient();
+                
                 while (sw.Elapsed < duration)
                 {
                     Parallel.For(1, numberTasks, (a) =>
                     {
-                        using (var dLock = new ElasticSearchDistributedLock("lock_" + a.ToString()))
+                        using (var dLock = new ElasticSearchDistributedLock("lock_" + a.ToString(), client))
                         {
                             if (dLock.Aquire())
                             {

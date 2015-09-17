@@ -38,11 +38,15 @@
             this.buttonChaos = new System.Windows.Forms.Button();
             this.textBoxChaosThreads = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.textBoxLockTimeout = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBoxLockRetry = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonAquire
             // 
-            this.buttonAquire.Location = new System.Drawing.Point(112, 43);
+            this.buttonAquire.Location = new System.Drawing.Point(112, 95);
             this.buttonAquire.Name = "buttonAquire";
             this.buttonAquire.Size = new System.Drawing.Size(75, 23);
             this.buttonAquire.TabIndex = 0;
@@ -68,7 +72,7 @@
             // 
             // buttonRelease
             // 
-            this.buttonRelease.Location = new System.Drawing.Point(202, 42);
+            this.buttonRelease.Location = new System.Drawing.Point(202, 94);
             this.buttonRelease.Name = "buttonRelease";
             this.buttonRelease.Size = new System.Drawing.Size(75, 23);
             this.buttonRelease.TabIndex = 3;
@@ -80,7 +84,7 @@
             // 
             this.textBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxLog.Location = new System.Drawing.Point(12, 156);
+            this.textBoxLog.Location = new System.Drawing.Point(12, 224);
             this.textBoxLog.Multiline = true;
             this.textBoxLog.Name = "textBoxLog";
             this.textBoxLog.Size = new System.Drawing.Size(265, 198);
@@ -89,7 +93,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 74);
+            this.label2.Location = new System.Drawing.Point(12, 126);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(90, 13);
             this.label2.TabIndex = 5;
@@ -97,7 +101,7 @@
             // 
             // textBoxChaos
             // 
-            this.textBoxChaos.Location = new System.Drawing.Point(112, 71);
+            this.textBoxChaos.Location = new System.Drawing.Point(112, 123);
             this.textBoxChaos.Name = "textBoxChaos";
             this.textBoxChaos.Size = new System.Drawing.Size(165, 20);
             this.textBoxChaos.TabIndex = 6;
@@ -105,7 +109,7 @@
             // 
             // buttonChaos
             // 
-            this.buttonChaos.Location = new System.Drawing.Point(112, 123);
+            this.buttonChaos.Location = new System.Drawing.Point(112, 175);
             this.buttonChaos.Name = "buttonChaos";
             this.buttonChaos.Size = new System.Drawing.Size(165, 23);
             this.buttonChaos.TabIndex = 7;
@@ -115,7 +119,7 @@
             // 
             // textBoxChaosThreads
             // 
-            this.textBoxChaosThreads.Location = new System.Drawing.Point(112, 97);
+            this.textBoxChaosThreads.Location = new System.Drawing.Point(112, 149);
             this.textBoxChaosThreads.Name = "textBoxChaosThreads";
             this.textBoxChaosThreads.Size = new System.Drawing.Size(165, 20);
             this.textBoxChaosThreads.TabIndex = 9;
@@ -124,17 +128,55 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 100);
+            this.label3.Location = new System.Drawing.Point(12, 152);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(82, 13);
             this.label3.TabIndex = 8;
             this.label3.Text = "Chaos Threads:";
             // 
+            // textBoxLockTimeout
+            // 
+            this.textBoxLockTimeout.Location = new System.Drawing.Point(112, 40);
+            this.textBoxLockTimeout.Name = "textBoxLockTimeout";
+            this.textBoxLockTimeout.Size = new System.Drawing.Size(165, 20);
+            this.textBoxLockTimeout.TabIndex = 11;
+            this.textBoxLockTimeout.Text = "00:01:00";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 43);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(57, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Lock TTL:";
+            // 
+            // textBoxLockRetry
+            // 
+            this.textBoxLockRetry.Location = new System.Drawing.Point(112, 66);
+            this.textBoxLockRetry.Name = "textBoxLockRetry";
+            this.textBoxLockRetry.Size = new System.Drawing.Size(165, 20);
+            this.textBoxLockRetry.TabIndex = 13;
+            this.textBoxLockRetry.Text = "0";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 69);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(93, 13);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "Lock Retry Count:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(289, 366);
+            this.ClientSize = new System.Drawing.Size(289, 434);
+            this.Controls.Add(this.textBoxLockRetry);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.textBoxLockTimeout);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.textBoxChaosThreads);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.buttonChaos);
@@ -164,6 +206,10 @@
         private System.Windows.Forms.Button buttonChaos;
         private System.Windows.Forms.TextBox textBoxChaosThreads;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textBoxLockTimeout;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBoxLockRetry;
+        private System.Windows.Forms.Label label5;
     }
 }
 
